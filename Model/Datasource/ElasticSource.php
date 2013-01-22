@@ -974,6 +974,8 @@ class ElasticSource extends DataSource {
 		$type = 'term';
 		if (is_array($value) && count($value) > 1) {
 			$type = 'terms';
+		} elseif (is_array($value)) {
+			$value = reset($value);
 		}
 		return array($type => array($key => $value));
 	}
