@@ -12,21 +12,21 @@
 class ElasticCursor implements Iterator {
 
 /**
- * Internal array iterator that wraps results from Elastic Search
+ * Internal array iterator that wraps results from Elastic Search.
  *
  * @var Iterator
  **/
 	protected $_iterator;
 
 /**
- * ElasticSource instance used to make requests to server
+ * ElasticSource instance used to make requests to server.
  *
  * @var ElasticSource
  **/
 	protected $_source;
 
 /**
- * Options to be passed to request for fetching results
+ * Options to be passed to request for fetching results.
  *
  * @var array
  **/
@@ -38,7 +38,7 @@ class ElasticCursor implements Iterator {
 	}
 
 /**
- * Sends request to ElasticSearch, wraps results in an iterator and returns it
+ * Sends request to ElasticSearch, wraps results in an iterator and returns it.
  *
  * @return ArrayIterator
  **/
@@ -58,7 +58,7 @@ class ElasticCursor implements Iterator {
 	}
 
 /**
- * Returns current's row value
+ * Returns current's row value.
  *
  * @return mixed
  **/
@@ -67,7 +67,7 @@ class ElasticCursor implements Iterator {
 	}
 
 /**
- * Returns current row key
+ * Returns current row key.
  *
  * @return string
  **/
@@ -76,7 +76,7 @@ class ElasticCursor implements Iterator {
 	}
 
 /**
- * Forwards internal cursor pointer to next position
+ * Forwards internal cursor pointer to next position.
  *
  * @return void
  **/
@@ -85,7 +85,7 @@ class ElasticCursor implements Iterator {
 	}
 
 /**
- * Rewinds internal cursor pointer
+ * Rewinds internal cursor pointer.
  *
  * @return void
  **/
@@ -94,7 +94,7 @@ class ElasticCursor implements Iterator {
 	}
 
 /**
- * Returns whether there are more results to be fetched or not
+ * Returns whether there are more results to be fetched or not.
  *
  * @return boolean
  **/

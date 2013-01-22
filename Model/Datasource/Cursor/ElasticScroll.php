@@ -1,5 +1,4 @@
 <?php
-
 App::uses('ElasticCursor', 'Elastic.Model/Datasource/Cursor');
 
 /**
@@ -11,56 +10,56 @@ App::uses('ElasticCursor', 'Elastic.Model/Datasource/Cursor');
 class ElasticScroll extends AppendIterator {
 
 /**
- * ElasticSource instance
+ * ElasticSource instance.
  *
  * @var ElasticSource
  **/
 	protected $_source;
 
 /**
- * Total number of rows this iterator contains
+ * Total number of rows this iterator contains.
  *
  * @var integer
  **/
 	protected $_total = 0;
 
 /**
- * Number of results per page. Used for sending scrol requests to the server
+ * Number of results per page. Used for sending scrol requests to the server.
  *
  * @var integer
  **/
 	protected $_pageSize = 0;
 
 /**
- * Current page this iterator is scrolling
+ * Current page this iterator is scrolling.
  *
  * @var integer
  **/
 	protected $_current = 0;
 
 /**
- * Total number of pages to retrieve given the page size and total results
+ * Total number of pages to retrieve given the page size and total results.
  *
  * @var integer
  **/
 	protected $_totalPages = 1;
 
 /**
- * Scroll id as returned by Elastic Search
+ * Scroll id as returned by Elastic Search.
  *
  * @var string
  **/
 	protected $_scrollId;
 
 /**
- * Options to be passed to subsequent requests to Elastic Search
+ * Options to be passed to subsequent requests to Elastic Search.
  *
  * @var array
  **/
 	protected $_options;
 
 /**
- * Iterator Constructor
+ * Iterator Constructor.
  *
  * @param ElasticSource $source Datasource instance to be used to make subsequent requests to Elastic Search
  * @param array $options should contain 'total', 'limit', 'scrollId' and optionaly all other keys to be passed to
@@ -89,7 +88,7 @@ class ElasticScroll extends AppendIterator {
 		$valid = parent::valid();
 		if (!$valid && $this->_current < $this->_totalPages) {
 			$from = $this->_current * $this->_pageSize;
-			
+
 			$query = array(
 				'scroll_id' => $this->_scrollId,
 				'from' => $from,
@@ -102,5 +101,4 @@ class ElasticScroll extends AppendIterator {
 		}
 		return $valid;
 	}
-
 }

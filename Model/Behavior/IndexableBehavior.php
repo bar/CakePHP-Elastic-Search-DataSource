@@ -1,8 +1,8 @@
 <?php
-Class IndexableBehavior extends ModelBehavior {
+class IndexableBehavior extends ModelBehavior {
 
 /**
- * Support for a distance find
+ * Support for a distance find.
  *
  * @var string
  */
@@ -11,14 +11,14 @@ Class IndexableBehavior extends ModelBehavior {
 	);
 
 /**
- * If performing a _geo_distance query and you want to capture the distance you'll need this field
+ * If performing a _geo_distance query and you want to capture the distance you'll need this field.
  *
  * @var string
  */
 	public $distanceField = null;
 
 /**
- * Support for having a geo_point field - just one at the moment
+ * Support for having a geo_point field - just one at the moment.
  *
  * @var array
  */
@@ -31,9 +31,9 @@ Class IndexableBehavior extends ModelBehavior {
 		),
 		'modificationField' => 'modified'
 	);
-	
+
 /**
- * Setup the model
+ * Setup the model.
  *
  * @param Model $Model 
  * @param array $settings 
@@ -45,9 +45,9 @@ Class IndexableBehavior extends ModelBehavior {
 		$Model->findMethods['geo'] = true;
 		$this->settings[$Model->alias] = Set::merge($this->_defaults, $settings);
 	}
-	
+
 /**
- * Geo-distance find - specialized for ElasticSource
+ * Geo-distance find - specialized for ElasticSource.
  *
  * @param Model $Model 
  * @param string $method 
@@ -74,7 +74,7 @@ Class IndexableBehavior extends ModelBehavior {
 	}
 
 /**
- * parse the $query array for a geo query (sorting by distance)
+ * Parse the $query array for a geo query (sorting by distance).
  *
  * @param Model $Model 
  * @param string $query 
@@ -83,9 +83,9 @@ Class IndexableBehavior extends ModelBehavior {
  */
 	public function parseGeoQuery(Model $Model, $query = array()) {
 		$geo = $this->settings[$Model->alias]['geoFields'];
-		
+
 		$alias = empty($geo['alias']) ? $Model->alias : $geo['alias'];
-		
+
 		$latKey = implode('.', array($alias, $geo['latitude']));
 		$lngKey = implode('.', array($alias, $geo['longitude']));
 
@@ -111,7 +111,7 @@ Class IndexableBehavior extends ModelBehavior {
 	}
 
 /**
- * Index a document or a list of documents, bypassing Model::save() (much faster)
+ * Index a document or a list of documents, bypassing Model::save() (much faster).
  *
  * Good for indexing pre-validated data such as data from your DB
  *
@@ -123,7 +123,7 @@ Class IndexableBehavior extends ModelBehavior {
 	public function index(Model $Model, $documents = array(), $options = array()) {
 		$defaults = array('callbacks' => false);
 		$options = array_merge($defaults, $options);
-		
+
 		$geoFields = !empty($this->settings[$Model->alias]['geoFields']) ? $this->settings[$Model->alias]['geoFields'] : false;
 		if ($geoFields) {
 			extract($geoFields);
@@ -153,7 +153,7 @@ Class IndexableBehavior extends ModelBehavior {
 	}
 
 /**
- * Find the last model that was synced, override this in your model if you have a different method
+ * Find the last model that was synced, override this in your model if you have a different method.
  *
  * @param Model $Model 
  * @param array $params 
@@ -181,7 +181,7 @@ Class IndexableBehavior extends ModelBehavior {
 	}
 
 /**
- * Build the sync conditions to sync models to ES, override in your Model if necessary
+ * Build the sync conditions to sync models to ES, override in your Model if necessary.
  *
  * @param Model $Model 
  * @param string $field 
@@ -195,7 +195,7 @@ Class IndexableBehavior extends ModelBehavior {
 	}
 
 /**
- * Get the modification field for this model - override in your Model if necessary
+ * Get the modification field for this model - override in your Model if necessary.
  *
  * @param Model $Model 
  * @return void
@@ -208,5 +208,4 @@ Class IndexableBehavior extends ModelBehavior {
 		}
 		return explode('.', $modificationField);
 	}
-
 }

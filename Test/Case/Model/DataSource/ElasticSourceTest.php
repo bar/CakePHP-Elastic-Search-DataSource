@@ -6,13 +6,13 @@ class ElasticSourceTest extends CakeTestCase {
 	public $fixtures = array('plugin.elastic.elastic_test_model');
 
 /**
- * Setup each test
+ * Setup each test.
  *
  * @return void
  * @author David Kullmann
  */
 	public function setUp() {
-		$this->Es = ConnectionManager::getDataSource('test_index');
+		$this->Es = ConnectionManager::getDataSource('test_elasticsearch');
 		if (!($this->Es instanceof ElasticSource)) {
 			$this->markTestSkipped('Unable to load elastic_test datasource for ElasticSource');
 		}
@@ -20,7 +20,7 @@ class ElasticSourceTest extends CakeTestCase {
 	}
 
 /**
- * Teardown each tests
+ * Teardown each tests.
  *
  * @return void
  * @author David Kullmann
@@ -31,7 +31,7 @@ class ElasticSourceTest extends CakeTestCase {
 	}
 
 /**
- * undocumented function
+ * Undocumented function.
  *
  * @return void
  * @author David Kullmann
@@ -50,7 +50,7 @@ class ElasticSourceTest extends CakeTestCase {
 	}
 
 /**
- * Test the getType method
+ * Test the getType method.
  *
  * @return void
  * @author David Kullmann
@@ -70,14 +70,14 @@ class ElasticSourceTest extends CakeTestCase {
 	}
 
 /**
- * test creating and dropping a mapping
+ * Test creating and dropping a mapping.
  *
  * @return void
  * @author David Kullmann
  */
 	public function testMapping() {
 		
-		$Unmapped = new Model(array('table' => 'map_test', 'name' => 'MapTest', 'ds' => 'test_index'));
+		$Unmapped = new Model(array('table' => 'map_test', 'name' => 'MapTest', 'ds' => 'test_elasticsearch'));
 		
 		$description = array(
 			$Unmapped->alias => array(
@@ -134,13 +134,12 @@ class ElasticSourceTest extends CakeTestCase {
 	}
 
 /**
- * Test parsing mappings for multiple types, multiple models, etc
+ * Test parsing mappings for multiple types, multiple models, etc.
  *
  * @return void
  * @author David Kullmann
  */
 	public function testParseMapping() {
-		
 		$mapping = array('index' => array(
 			'type' => array(
 				'properties' => array(
@@ -237,6 +236,151 @@ class ElasticSourceTest extends CakeTestCase {
 		$result = $this->Es->parseMapping($mapping, true);
 		$this->assertEquals($expected, $result);	
 	}
-	
+
+/**
+ * Create and map a model.
+ *
+ * @return object Model
+ */
+	private function __mapModel($name) {
+		$Model = new Model(array('table' => 'map_test', 'name' => $name, 'ds' => 'test_elasticsearch'));
+		$mapping = array(
+			$Model->alias => array(
+				'id' => array(
+					'type' => 'integer',
+					'length' => 36
+				),
+				'string' => array(
+					'type' => 'string'
+				)
+			)
+		);
+		$this->Es->mapModel($Model, $mapping);
+
+		return $Model;
+	}
+
+/**
+ * Test simple conditions.
+ *
+ * @return void
+ */
+	public function testParseConditionsSimple() {
+		$Model = $this->__mapModel('MapTest');
+
+		$conditions = array(
+			'string' => 'test'
+		);
+		$expected = array(
+			array(
+				'term' => array(
+					'string' => 'test'
+				)
+			)
+		);
+		$result = $this->Es->parseConditions($Model, $conditions);
+		$this->assertEquals($expected, $result);
+
+		$conditions = array(
+			'MapTest.string' => 'test'
+		);
+		$expected = array(
+			array(
+				'term' => array(
+					'MapTest.string' => 'test'
+				)
+			)
+		);
+		$result = $this->Es->parseConditions($Model, $conditions);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test boolean conditions.
+ *
+ * @return void
+ */
+	public function testParseConditionsBoolean() {
+		$Model = $this->__mapModel('MapTest');
+
+		// multiple
+		$conditions = array(
+			'bool' => array(
+				'MapTest.id must =' => array(1, 2, 3)
+			)
+		);
+		$expected = array(
+			array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'terms' => array(
+								'MapTest.id' => array(1, 2, 3)
+							)
+						)
+					)
+				)
+			)
+		);
+		$result = $this->Es->parseConditions($Model, $conditions);
+		$this->assertEquals($expected, $result);
+
+		// single
+		$expected = array(
+			array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'MapTest.id' => 1
+							)
+						)
+					)
+				)
+			)
+		);
+
+		$conditions = array(
+			'bool' => array(
+				'MapTest.id must =' => 1
+			)
+		);
+		$result = $this->Es->parseConditions($Model, $conditions);
+		$this->assertEquals($expected, $result);
+
+		$conditions = array(
+			'bool' => array(
+				'MapTest.id must =' => array(1)
+			)
+		);
+		$result = $this->Es->parseConditions($Model, $conditions);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test query string conditions.
+ *
+ * @return void
+ */
+	public function testParseConditionsQueryString() {
+		$Model = $this->__mapModel('MapTest');
+
+		$conditions = array(
+			'query_string' => array(
+				'fields' => array('MapTest.string'),
+				'query' => 'Text to be looked up'
+		    )
+		);
+		$expected = array(
+			array(
+				'query_string' => array(
+					'fields' => array('MapTest.string'),
+					'query' => 'Text to be looked up'
+				)
+			)
+		);
+		$result = $this->Es->parseConditions($Model, $conditions);
+		$this->assertEquals($expected, $result);
+	}
 }
 ?>

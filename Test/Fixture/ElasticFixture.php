@@ -1,16 +1,16 @@
 <?php
 class ElasticFixture extends CakeTestFixture {
-	
+
 /**
- * Require a test datasource
+ * Require a test datasource.
  *
  * @var string
  */
-	public $useDbConfig = 'test_index';
+	public $useDbConfig = 'test_elasticsearch';
 
 /**
  * Override the normal CakeTestFixture::__construct() to get the name
- * from our pattern
+ * from our pattern.
  *
  * @author David Kullmann
  */
@@ -25,7 +25,5 @@ class ElasticFixture extends CakeTestFixture {
 		}
 		return parent::__construct();
 	}
-	
-	
 }
 ?>

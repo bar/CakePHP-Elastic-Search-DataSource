@@ -1,23 +1,19 @@
 <?php
-
 App::uses('HttpSocket', 'Network/Http');
 App::uses('ElasticScroll', 'ElasticSearch.Model/Datasource/Cursor');
 
-
 /**
- * Throw this when we are missing an index
+ * Throw this when we are missing an index.
  *
  * @package default
  * @author David Kullmann
  */
 class MissingIndexException extends CakeException {
-
 	protected $_messageTemplate = 'Index "%s" is missing.';
-
 }
 
 /**
- * ElasticSource datasource for Elastic Search
+ * ElasticSource datasource for Elastic Search.
  *
  * @package default
  * @author David Kullmann
@@ -25,42 +21,42 @@ class MissingIndexException extends CakeException {
 class ElasticSource extends DataSource {
 
 /**
- * Holds HttpSocket Object
+ * Holds HttpSocket Object.
  *
  * @var object
  */
 	public $Http;
 
 /**
- * Holds the mappings
+ * Holds the mappings.
  *
  * @var array
  */
 	protected $_schema = array();
 
 /**
- * Prevents error from being thrown in CakeTestFixture
+ * Prevents error from being thrown in CakeTestFixture.
  *
  * @var string
  */
 	public $useNestedTransactions = false;
 
 /**
-* Prevents error from being thrown in CakeTestFixture
+* Prevents error from being thrown in CakeTestFixture.
  *
  * @var string
  */
 	public $fullDebug = false;
 
 /**
- * Track if we are in a transaction or not - allows saving multiple models to a document
+ * Track if we are in a transaction or not - allows saving multiple models to a document.
  *
  * @var boolean
  */
 	protected $_transactionStarted = false;
 
 /**
- * If we are in a transaction this is the 'type' for the model indexing
+ * If we are in a transaction this is the 'type' for the model indexing.
  *
  * @var string
  */
@@ -74,35 +70,35 @@ class ElasticSource extends DataSource {
 	protected $_parent = null;
 
 /**
- * If we are in a transaction this is the id for the model we are indexing
+ * If we are in a transaction this is the id for the model we are indexing.
  *
  * @var string
  */
 	protected $_id = null;
 
 /**
- * The document for this transaction (for saving more than one model)
+ * The document for this transaction (for saving more than one model).
  *
  * @var array
  */
 	protected $_document = array();
 
 /**
- * Valid operators from DboSource to support
+ * Valid operators from DboSource to support.
  *
  * @var string
  */
 	protected $_filterOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
 /**
- * Don't list sources by default, there's still some problems here
+ * Don't list sources by default, there's still some problems here.
  *
  * @var boolean
  */
 	protected $_listSources = true;
 
 /**
- * Query log
+ * Query log.
  *
  * @var string
  */
@@ -113,7 +109,7 @@ class ElasticSource extends DataSource {
 	);
 
 /**
- * Constructor, call the parent and setup Http
+ * Constructor, call the parent and setup Http.
  *
  * @param array $config
  * @author David Kullmann
@@ -134,7 +130,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Describe a model based on it's mapping
+ * Describe a model based on it's mapping.
  *
  * @param Model $Model
  * @return array Schema
@@ -162,7 +158,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * List the types available for each index
+ * List the types available for each index.
  *
  * @return array Array of types - similar to tables in a DB
  * @author David Kullmann
@@ -177,9 +173,7 @@ class ElasticSource extends DataSource {
 		return $sources;
 	}
 
-	public function calculate(Model $Model, $func, $params = null) {
-
-	}
+	public function calculate(Model $Model, $func, $params = null) {}
 
 /**
  * If this operation is atomic then store the model data to be created on "commit" later,
@@ -197,7 +191,6 @@ class ElasticSource extends DataSource {
  * @author David Kullmann
  */
 	public function create(Model $Model, $fields = array(), $values = array()) {
-
 		$parentIndex = array_search('_parent', $fields);
 		if ($parentIndex !== false) {
 			$this->_parent = $values[$parentIndex];
@@ -223,7 +216,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Query ElasticSearch to retrieve records
+ * Query ElasticSearch to retrieve records.
  *
  * @param Model $Model
  * @param array $queryData
@@ -243,7 +236,6 @@ class ElasticSource extends DataSource {
 		}
 		$results = $this->get($this->getType($Model), $api, $query);
 
-
 		if($Model->findQueryType === 'count') {
 			return array(array($Model->alias => array('count' => $results)));
 		}
@@ -255,7 +247,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Delete a record
+ * Delete a record.
  *
  * @param Model $Model
  * @param array $conditions
@@ -277,7 +269,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Used by CakeTestFixture to truncate a type
+ * Used by CakeTestFixture to truncate a type.
  *
  * @param string $type
  * @return void
@@ -304,8 +296,7 @@ class ElasticSource extends DataSource {
  * @param string $column The column to use when reseting the sequence value.
  * @return boolean success.
  */
-	public function resetSequence($table, $column) {
-	}
+	public function resetSequence($table, $column) {}
 
 	public function query($method, $params, Model $Model) {
 		if ($method === 'scan') {
@@ -374,7 +365,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Convert a pluralized table name (test_models) to an alias (TestModel)
+ * Convert a pluralized table name (test_models) to an alias (TestModel).
  *
  * @param string $table
  * @return string
@@ -387,7 +378,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Create schema, used in testing
+ * Create schema, used in testing.
  *
  * @param string $schema
  * @return void
@@ -418,7 +409,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Drop a schema
+ * Drop a schema.
  *
  * @param string $Schema
  * @return void
@@ -434,11 +425,10 @@ class ElasticSource extends DataSource {
 			}
 		}
 		$this->post('_refresh');
-
 	}
 
 /**
- * Bulk index a group of models
+ * Bulk index a group of models.
  *
  * @param string $type
  * @param array $documents
@@ -446,7 +436,6 @@ class ElasticSource extends DataSource {
  * @author David Kullmann
  */
 	public function bulkIndex($type = null, $documents = array()) {
-
 		$json = array();
 
 		foreach ($documents as $document) {
@@ -464,7 +453,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Get/set the current model - called when requests are starting
+ * Get/set the current model - called when requests are starting.
  *
  * @param Model $Model
  * @return Model the current model
@@ -478,7 +467,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Check to see if we are in a transacion
+ * Check to see if we are in a transacion.
  *
  * @param string $document
  * @return void
@@ -493,7 +482,7 @@ class ElasticSource extends DataSource {
 
 /**
  * Begin a transaction - allows saving of multiple models pseudo-automically through _bulk API, but it's main
- * purpose is to allow saving associated model data and multiple models (saveMany/saveAssociated)
+ * purpose is to allow saving associated model data and multiple models (saveMany/saveAssociated).
  *
  * @return true
  * @author David Kullmann
@@ -506,7 +495,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Save all models we have been storing
+ * Save all models we have been storing.
  *
  * @return boolean true on success
  * @author David Kullmann
@@ -521,7 +510,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Cancel this save operation/transaction
+ * Cancel this save operation/transaction.
  *
  * @return void
  * @author David Kullmann
@@ -531,7 +520,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Reset our transaction state, document, id, and type
+ * Reset our transaction state, document, id, and type.
  *
  * @return void
  * @author David Kullmann
@@ -544,7 +533,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Store a document to save later, merge it with existing model information for that document
+ * Store a document to save later, merge it with existing model information for that document.
  *
  * Allows saveAssociated to work and allows storing multiple models in one document
  *
@@ -564,7 +553,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Get the current document
+ * Get the current document.
  *
  * @return array Document data
  * @author David Kullmann
@@ -574,7 +563,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Get all documents for this transaction
+ * Get all documents for this transaction.
  *
  * @return array Array of documents keyed by their primary key
  * @author David Kullmann
@@ -583,11 +572,9 @@ class ElasticSource extends DataSource {
 		return $this->_document;
 	}
 
-
-
 /**
  * If we are in a new transaction, set _type and _id, if we are in an existing
- * transaction then start a new document and set _id
+ * transaction then start a new document and set _id.
  *
  * @param Model $Model
  * @param array $document
@@ -595,7 +582,6 @@ class ElasticSource extends DataSource {
  * @author David Kullmann
  */
 	protected function _setupTransaction(Model $Model, $document = array()) {
-
 		$id = $this->_findKey($Model, $document);
 		$type = $this->getType($Model);
 
@@ -612,14 +598,13 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Generate an ElasticSearch query from Cake's ORM $queryData
+ * Generate an ElasticSearch query from Cake's ORM $queryData.
  *
  * @param array $queryData
  * @return array Array that can be converted to JSON for ElasticSearch
  * @author David Kullmann
  */
 	public function generateQuery(Model $Model, $queryData = array()) {
-
 		$queryKeys = array(
 			'conditions' => array(
 				'key' => 'filter',
@@ -666,7 +651,7 @@ class ElasticSource extends DataSource {
 			$queryData['limit'] = 10;
 		}
 
-		if($queryData['page'] === 1) {
+		if ($queryData['page'] === 1) {
 			$queryData['page'] = 0;
 		} else {
 			$queryData['page'] = ($queryData['page'] - 1 ) * $queryData['limit'];
@@ -698,7 +683,6 @@ class ElasticSource extends DataSource {
 			$query = array($type => compact('query', 'filter'));
 		}
 
-
 		$query = compact('query', 'size', 'sort', 'from', 'fields', 'facets');
 
 		if ($Model->findQueryType === 'count') {
@@ -708,6 +692,12 @@ class ElasticSource extends DataSource {
 		return $query;
 	}
 
+/**
+ * Parse the type of search (filtered or query).
+ *
+ * @param array $query
+ * @return string
+ */
 	public function parseQueryType($query) {
 		$type = 'filtered';
 		if (!empty($query['type'])) {
@@ -724,7 +714,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Parse the 'conditions' key of a query from CakePHP's ORM
+ * Parse the 'conditions' key of a query from CakePHP's ORM.
  *
  * @param array $conditions
  * @return array Array of filters for ElasticSearch
@@ -743,13 +733,11 @@ class ElasticSource extends DataSource {
 	}
 
 	public function parseOrder(Model $Model, $query = array()) {
-
 		$results = array();
 
 		$order = $query['order'];
 
 		foreach ($order as $key => $value) {
-
 			if ($key === 0 && empty($value)) {
 				return false;
 			}
@@ -810,7 +798,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Used to parse a key for ElasticSearch filters
+ * Used to parse a key for ElasticSearch filters.
  *
  * @param string $key
  * @param mixed $value
@@ -818,7 +806,6 @@ class ElasticSource extends DataSource {
  * @author David Kullmann
  */
 	protected function _parseKey(Model $Model, $key, $value) {
-
 		if (is_numeric($key)) {
 			if (empty($value)) {
 				return false;
@@ -935,7 +922,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Restructures bool filters so they have the propper formatting for Elastic Search
+ * Restructures bool filters so they have the propper formatting for Elastic Search.
  *
  * @param array $filter single bool filter created by _parseKey
  * @return array
@@ -952,7 +939,7 @@ class ElasticSource extends DataSource {
 /**
  * Perform this check after parseConditions has completed, since parseConditions is recursive
  * we have to perform this check in a separate method (or use a static variable or whatever, but,
- * I think this is cleaner)
+ * I think this is cleaner).
  *
  * @param string $Model
  * @param array $filters
@@ -1013,11 +1000,10 @@ class ElasticSource extends DataSource {
 		}
 
 		return array();
-
 	}
 
 /**
- * Creates filter for a geo boundary box
+ * Creates filter for a geo boundary box.
  *
  * @return array
  **/
@@ -1030,7 +1016,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Creates filter for a geo distance search
+ * Creates filter for a geo distance search.
  *
  * @return array
  **/
@@ -1046,7 +1032,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Creates filter for a geo distance range search
+ * Creates filter for a geo distance range search.
  *
  * @return array
  **/
@@ -1063,7 +1049,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Find the key for this document
+ * Find the key for this document.
  *
  * @param Model $Model
  * @param array $document
@@ -1078,7 +1064,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Get the entire index mapping
+ * Get the entire index mapping.
  *
  * @return array ES Mapping
  * @author David Kullmann
@@ -1088,7 +1074,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Parse an entire index mapping to create the schema for this datasource
+ * Parse an entire index mapping to create the schema for this datasource.
  *
  * @param array $mapping
  * @return array CakePHP schema
@@ -1115,7 +1101,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Get the useType if its set, otherwise use the table name
+ * Get the useType if its set, otherwise use the table name.
  *
  * @param Model $Model
  * @return void
@@ -1205,14 +1191,13 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Check to see if a mapping exists
+ * Check to see if a mapping exists.
  *
  * @param Model $Model
  * @return boolean true if it exists
  * @author David Kullmann
  */
 	public function checkMapping($Model) {
-
 		if (is_string($Model)) {
 			$type = $Model;
 		} elseif ($Model instanceof Model) {
@@ -1229,7 +1214,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Map a model based on it's description from MySQL (or your own)
+ * Map a model based on it's description from MySQL (or your own).
  *
  * @param Model $Model
  * @param array $description
@@ -1237,7 +1222,6 @@ class ElasticSource extends DataSource {
  * @author David Kullmann
  */
 	public function mapModel(Model $Model, $description = array(), $alias = true) {
-
 		$alias = $Model->alias;
 		if (empty($description[$alias])) {
 			$tmp = $description;
@@ -1264,7 +1248,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Delete a mapping
+ * Delete a mapping.
  *
  * @param Model $Model
  * @return boolean true on success
@@ -1273,7 +1257,6 @@ class ElasticSource extends DataSource {
 	public function dropMapping(Model $Model) {
 		return $this->_delete($this->getType($Model));
 	}
-
 
 /**
  * Returns an iterator with all results for an index type, the results order is maintained
@@ -1303,7 +1286,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Copies all documents from an index type to another
+ * Copies all documents from an index type to another.
  *
  * @param ElasticScroll $scroll Iterator with results to be copied, can be from another server.
  * @param array $options Array with following options:
@@ -1335,7 +1318,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Call HttpSocket methods
+ * Call HttpSocket methods.
  *
  * @param string $method
  * @param array $arguments
@@ -1345,11 +1328,9 @@ class ElasticSource extends DataSource {
  * @author David Kullmann
  */
 	public function __call($method, $arguments) {
-
 		$method = $method === '_delete' ? 'delete' : $method;
 
 		if (method_exists($this->Http, $method)) {
-
 			if (isset($arguments[3]) && $arguments[3] === false) {
 				$encode = false;
 			} else {
@@ -1372,48 +1353,48 @@ class ElasticSource extends DataSource {
 	}
 
 	public function execute($method = null, $type = null, $api = null, $data = array()) {
-			// Being called from Fixture
-			if (is_array($type) && key($type) === 'log') {
-				return true;
-			}
+		// Being called from Fixture
+		if (is_array($type) && key($type) === 'log') {
+			return true;
+		}
 
-			$path = array_filter(array($this->config['index'], $type, $api));
-			$path = '/' . implode('/', $path);
+		$path = array_filter(array($this->config['index'], $type, $api));
+		$path = '/' . implode('/', $path);
 
-			//Could contain $body and $query
-			extract($data);
+		//Could contain $body and $query
+		extract($data);
 
-			// Append "_parent" to query instead of data
-			if ($this->_parent !== null) {
-				$query['parent'] = $this->_parent;
-				$this->_parent = null;
-			}
+		// Append "_parent" to query instead of data
+		if ($this->_parent !== null) {
+			$query['parent'] = $this->_parent;
+			$this->_parent = null;
+		}
 
-			$uri = $this->_uri(compact('path', 'query'));
+		$uri = $this->_uri(compact('path', 'query'));
 
-			if (!isset($body)) {
-				$body = null;
-			}
+		if (!isset($body)) {
+			$body = null;
+		}
 
-			switch ($method) {
-				case 'get':
-					$response = call_user_func_array(array(&$this->Http, $method), array($uri, array(), compact('body')));
-					break;
-				default:
-					$response = call_user_func_array(array(&$this->Http, $method), array($uri, $body));
-			}
+		switch ($method) {
+			case 'get':
+				$response = call_user_func_array(array(&$this->Http, $method), array($uri, array(), compact('body')));
+				break;
+			default:
+				$response = call_user_func_array(array(&$this->Http, $method), array($uri, $body));
+		}
 
-			$results = $this->_parseResponse($response);
-			$this->logQuery($method, $uri, $body, $results);
-			if (!is_string($body)) {
-				$body = json_encode($body);
-			}
+		$results = $this->_parseResponse($response);
+		$this->logQuery($method, $uri, $body, $results);
+		if (!is_string($body)) {
+			$body = json_encode($body);
+		}
 
-			return $results;
+		return $results;
 	}
 
 /**
- * Get the URI for a request
+ * Get the URI for a request.
  *
  * @param array $config HttpSocket $config style array
  * @return array Array compatible with HttpSocket $uri for get/post/put/delete
@@ -1459,7 +1440,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Filter results from a call, parsing out the records
+ * Filter results from a call, parsing out the records.
  *
  * @param array $results
  * @return array Array of results
@@ -1510,14 +1491,13 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Recursive method to map a SQL-like model description into a ElasticSearch one
+ * Recursive method to map a SQL-like model description into a ElasticSearch one.
  *
  * @param array $description
  * @return array Array representing ES Mapping
  * @author David Kullmann
  */
 	protected function _parseDescription($description = array(), $Model = null) {
-
 		$properties = array();
 
 		foreach ($description as $field => $info) {
@@ -1555,11 +1535,10 @@ class ElasticSource extends DataSource {
 		}
 
 		return $properties;
-
 	}
 
 /**
- * Convert MySQL or CakePHP ORM field attributes into ElasticSearch compatible attributes
+ * Convert MySQL or CakePHP ORM field attributes into ElasticSearch compatible attributes.
  *
  * @param string $attr
  * @param string $val
@@ -1567,7 +1546,6 @@ class ElasticSource extends DataSource {
  * @author David Kullmann
  */
 	protected function _convertAttributes($attr, $val) {
-
 		$notUsed = array('null', 'collate', 'length', 'default', 'key', 'charset');
 
 		if (in_array($attr, $notUsed)) {
@@ -1582,7 +1560,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Log a new query if debug is on
+ * Log a new query if debug is on.
  *
  * @param string $method
  * @param string $uri
@@ -1611,7 +1589,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Get the query log - support for DebugKit Toolbar
+ * Get the query log - support for DebugKit Toolbar.
  *
  * @return void
  * @author David Kullmann
@@ -1621,7 +1599,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Added an item to the query log
+ * Added an item to the query log.
  *
  * @param string $data
  * @return void
@@ -1640,7 +1618,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Throw the right error
+ * Throw the right error.
  *
  * @param string $info
  * @return void
@@ -1656,7 +1634,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Make Elastic play nice with Model::escapeField();
+ * Make Elastic play nice with Model::escapeField().
  *
  * @param string $alias The model alias
  * @return string
@@ -1666,7 +1644,7 @@ class ElasticSource extends DataSource {
 	}
 
 /**
- * Gets full table name including prefix
+ * Gets full table name including prefix.
  *
  * @param Model|string $model Either a Model object or a string table name.
  * @param boolean $quote Whether you want the table name quoted.
@@ -1702,4 +1680,3 @@ class ElasticSource extends DataSource {
 		return $table;
 	}
 }
-
