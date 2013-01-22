@@ -636,12 +636,13 @@ class ElasticSource extends DataSource {
 			)
 		);
 
+		if (array_key_exists('query', $queryData)) {
+			$queryData['query'] = $this->parseConditions($Model, $queryData['query']);
+			$queryData['query'] = $this->afterParseConditions($Model, $queryData['query']);
+		}
+
 		$queryData['conditions'] = $this->parseConditions($Model, $queryData['conditions']);
 		$queryData['conditions'] = $this->afterParseConditions($Model, $queryData['conditions']);
-
-		if (is_string($queryData['conditions'])) {
-			return $queryData['conditions'];
-		}
 
 		$queryData['order'] = $this->parseOrder($Model, $queryData);
 
@@ -675,7 +676,16 @@ class ElasticSource extends DataSource {
 
 		$query['type'] = $this->parseQueryType($query);
 
-		$query['query'] = empty($query['query']) ? array('match_all' => new Object()) : $query['query'];
+		if (empty($query['query'])) {
+			$query['query'] = array('match_all' => new Object());
+			if (!empty($query['filter']) && array_key_exists('query_string', $query['filter'])) {
+				$query['filter'] = array(
+					'query' => array(
+						$query['filter']
+					)
+				);
+			}
+		}
 
 		extract($query);
 
@@ -703,13 +713,11 @@ class ElasticSource extends DataSource {
 		if (!empty($query['type'])) {
 			$type = $query['type'];
 		}
+
 		if (empty($query['filter'])) {
-			if (empty($query['query'])) {
-				$type = 'query';
-			} else {
-				$type = 'query_string';
-			}
+			$type = 'query';
 		}
+
 		return $type;
 	}
 
@@ -851,7 +859,7 @@ class ElasticSource extends DataSource {
 		}
 
 		if ($key === 'query_string') {
-			return array('query' => array('query_string' => $value));
+			return array('query_string' => $value);
 		}
 
 		if ($key === 'has_child') {
