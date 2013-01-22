@@ -34,7 +34,7 @@ class ElasticTestModelFixture extends ElasticFixture {
  */
 	public $fields = array(
 		// Identifier
-		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary', 'index' => 'not_analyzed'),
+		'id' => array('type' => 'integer', 'length' => 11, 'key' => 'primary'),
 
 		// String
 		'string'     => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10),
@@ -51,9 +51,15 @@ class ElasticTestModelFixture extends ElasticFixture {
  */
 	public $records = array(
 		array(
-			'id'       => 'test-model',
-			'string'   => 'Analyzed for terms',
-			'created'  => '2012-01-01 00:00:00',
+			'id' => 1,
+			'string' => 'Analyzed for terms',
+			'created' => '2012-01-01 00:00:00',
+			'modified' => '2012-02-01 00:00:00'
+		),
+		array(
+			'id' => 2,
+			'string' => 'example',
+			'created' => '2012-01-01 00:00:00',
 			'modified' => '2012-02-01 00:00:00'
 		)
 	);

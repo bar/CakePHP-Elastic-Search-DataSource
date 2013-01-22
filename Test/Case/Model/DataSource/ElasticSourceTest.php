@@ -383,4 +383,3 @@ class ElasticSourceTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 }
-?>
