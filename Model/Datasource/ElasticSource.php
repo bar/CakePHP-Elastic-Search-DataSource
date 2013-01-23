@@ -130,6 +130,26 @@ class ElasticSource extends DataSource {
 	}
 
 /**
+ * Check server status.
+ *
+ * @return boolean
+ */
+	public function serverStatus() {
+		$uri = $this->_uri(array('path' => ''));
+		try {
+			$response = call_user_func_array(array(&$this->Http, 'get'), array($uri));
+		} catch (Exception $e) {
+			return false;
+		}
+
+		$body = json_decode($response->body, true);
+		if (!empty($body['status']) && $body['status'] === 200) {
+			return true;
+		}
+		return false;
+	}
+
+/**
  * Describe a model based on it's mapping.
  *
  * @param Model $Model
